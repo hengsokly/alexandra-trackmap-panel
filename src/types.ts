@@ -1,4 +1,4 @@
-type ViewType = 'ant' | 'hex' | 'heat' | 'marker' | 'ant-marker';
+type ViewType = 'ant' | 'hex' | 'heat' | 'marker' | 'ant-marker' | 'geospatial';
 
 export interface TrackMapOptions {
   text: string;
@@ -9,6 +9,7 @@ export interface TrackMapOptions {
   heat: HeatOptions;
   marker: MarkerOptions;
   hex: HexOptions;
+  geospatial: GeoSpatialOptions;
   discardZeroOrNull: boolean;
 }
 
@@ -57,6 +58,10 @@ interface HexOptions {
   colorRangeTo: string;
   radiusRangeFrom: number;
   radiusRangeTo: number;
+}
+
+interface GeoSpatialOptions {
+  geoJsonUrl: string;
 }
 
 export interface Position {

@@ -96,6 +96,10 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
               value: 'heat',
               label: 'Heatmap',
             },
+            {
+              value: 'geospatial',
+              label: 'Geospatial',
+            },
           ],
         },
       })
@@ -216,6 +220,13 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         name: 'Radius range to',
         defaultValue: 12,
         showIf: (config) => config.viewType === 'hex',
+      })
+      // geospatial
+      .addTextInput({
+        path: 'geospatial.geoJsonUrl',
+        name: 'GeoJSON URL',
+        defaultValue: '',
+        showIf: (config) => config.viewType === 'geospatial',
       })
   );
 });

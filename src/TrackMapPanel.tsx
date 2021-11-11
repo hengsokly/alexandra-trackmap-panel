@@ -1,16 +1,17 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { PanelProps } from '@grafana/data';
 import { getLocationSrv } from '@grafana/runtime';
 import { TrackMapOptions, Position } from 'types';
 import { css, cx } from 'emotion';
 import { stylesFactory } from '@grafana/ui';
 import { FeatureCollection, Feature } from 'geojson';
-import { Map, TileLayer, Marker, Popup, Tooltip, withLeaflet } from 'react-leaflet';
+import { Map, TileLayer, Marker, Popup, Tooltip, withLeaflet, GeoJSON, Pane, Circle } from 'react-leaflet';
 import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import { useRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
+import { getGeoDatas } from './geoData';
 
 const AntPath = require('react-leaflet-ant-path').default;
 const HeatmapLayer = require('react-leaflet-heatmap-layer').default;
@@ -27,6 +28,12 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   const primaryIcon: string = require('img/marker.png');
   const secondaryIcon: string = require('img/marker_secondary.png');
 
+  const defaultGeoData: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  };
+  const [geoDatas, setGeoDatas] = useState(defaultGeoData);
+
   useEffect(() => {
     if (mapRef.current !== null) {
       if (options.map.zoomToDataBounds) {
@@ -35,6 +42,13 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       }
       const bounds = mapRef.current.leafletElement.getBounds();
       updateMap(bounds);
+
+      // request to get geoData
+      if (options.viewType === 'geospatial') {
+        getGeoDatas(options.geospatial.geoJsonUrl, function (datas: any) {
+          setGeoDatas(datas);
+        });
+      }
     }
     // eslint-disable-next-line
   }, []);
@@ -193,6 +207,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     alwaysShowTooltips: boolean
   ): ReactElement[] => {
     let markers: ReactElement[] = [];
+    let myMarkers: ReactElement[] = [];
     if (positions?.length > 0) {
       positions.forEach((p, i) => {
         const isLastPosition = i + 1 === positions?.length;
@@ -205,6 +220,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
             <Popup>{ReactHtmlParser(p.popup || '')}</Popup>
             {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
+          </Marker>
+        );
+
+        myMarkers.push(
+          <Marker key={i} position={[p.latitude, p.longitude]} title={p.popup}>
+            <Pane name="custom" style={{ zIndex: 100 }}>
+              <Circle center={[50.5, 30.5]} radius={200} />
+            </Pane>
           </Marker>
         );
       });
@@ -222,6 +245,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
 
   const markers: ReactElement[] = createMarkers(
+    positions,
+    options.marker.useSecondaryIconForAllMarkers,
+    options.marker.useSecondaryIconForLastMarker,
+    options.marker.showOnlyLastMarker,
+    options.marker.alwaysShowTooltips
+  );
+
+  const myMarkers: ReactElement[] = createMarkers(
     positions,
     options.marker.useSecondaryIconForAllMarkers,
     options.marker.useSecondaryIconForLastMarker,
@@ -363,10 +394,20 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         )}
         {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && markers}
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={options.map.tileUrlSchema}
-        />
+
+        {options.viewType !== 'geospatial' && (
+          <TileLayer
+            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url={options.map.tileUrlSchema}
+          />
+        )}
+
+        {options.viewType === 'geospatial' && !!geoDatas.features.length && (
+          <div>
+            <GeoJSON data={geoDatas} style={{ weight: 1 }} />
+            {myMarkers}
+          </div>
+        )}
       </Map>
     </div>
   );
