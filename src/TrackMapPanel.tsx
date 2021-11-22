@@ -207,7 +207,6 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     alwaysShowTooltips: boolean
   ): ReactElement[] => {
     let markers: ReactElement[] = [];
-    let myMarkers: ReactElement[] = [];
     if (positions?.length > 0) {
       positions.forEach((p, i) => {
         const isLastPosition = i + 1 === positions?.length;
@@ -220,14 +219,6 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
             <Popup>{ReactHtmlParser(p.popup || '')}</Popup>
             {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
-          </Marker>
-        );
-
-        myMarkers.push(
-          <Marker key={i} position={[p.latitude, p.longitude]} title={p.popup}>
-            <Pane name="custom" style={{ zIndex: 100 }}>
-              <Circle center={[50.5, 30.5]} radius={200} />
-            </Pane>
           </Marker>
         );
       });
@@ -245,14 +236,6 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
 
   const markers: ReactElement[] = createMarkers(
-    positions,
-    options.marker.useSecondaryIconForAllMarkers,
-    options.marker.useSecondaryIconForLastMarker,
-    options.marker.showOnlyLastMarker,
-    options.marker.alwaysShowTooltips
-  );
-
-  const myMarkers: ReactElement[] = createMarkers(
     positions,
     options.marker.useSecondaryIconForAllMarkers,
     options.marker.useSecondaryIconForLastMarker,
@@ -405,7 +388,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         {options.viewType === 'geospatial' && !!geoDatas.features.length && (
           <div>
             <GeoJSON data={geoDatas} style={{ weight: 1 }} />
-            {myMarkers}
+            {markers}
           </div>
         )}
       </Map>

@@ -37344,9 +37344,11 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       var bounds = mapRef.current.leafletElement.getBounds();
       updateMap(bounds); // request to get geoData
 
-      Object(_geoData__WEBPACK_IMPORTED_MODULE_10__["getGeoDatas"])(options.geospatial.geoJsonUrl, function (datas) {
-        setGeoDatas(datas);
-      });
+      if (options.viewType === 'geospatial') {
+        Object(_geoData__WEBPACK_IMPORTED_MODULE_10__["getGeoDatas"])(options.geospatial.geoJsonUrl, function (datas) {
+          setGeoDatas(datas);
+        });
+      }
     } // eslint-disable-next-line
 
   }, []);
@@ -37470,7 +37472,6 @@ var TrackMapPanel = function TrackMapPanel(_a) {
 
   var createMarkers = function createMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker, alwaysShowTooltips) {
     var markers = [];
-    var myMarkers = [];
 
     if ((positions === null || positions === void 0 ? void 0 : positions.length) > 0) {
       positions.forEach(function (p, i) {
@@ -37485,19 +37486,6 @@ var TrackMapPanel = function TrackMapPanel(_a) {
         }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, react_html_parser__WEBPACK_IMPORTED_MODULE_9___default()(p.popup || '')), p.tooltip && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Tooltip"], {
           permanent: alwaysShowTooltips
         }, p.tooltip)));
-        myMarkers.push(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Marker"], {
-          key: i,
-          position: [p.latitude, p.longitude],
-          title: p.popup
-        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Pane"], {
-          name: "custom",
-          style: {
-            zIndex: 100
-          }
-        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Circle"], {
-          center: [50.5, 30.5],
-          radius: 200
-        }))));
       });
     }
 
@@ -37514,7 +37502,6 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   };
 
   var markers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker, options.marker.alwaysShowTooltips);
-  var myMarkers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker, options.marker.alwaysShowTooltips);
   var antOptions = {
     delay: options.ant.delay,
     dashArray: [10, 20],
@@ -37650,7 +37637,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     style: {
       weight: 1
     }
-  }), myMarkers)));
+  }), markers)));
 };
 var getStyles = Object(_grafana_ui__WEBPACK_IMPORTED_MODULE_4__["stylesFactory"])(function () {
   return {
