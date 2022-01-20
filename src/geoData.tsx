@@ -29,8 +29,6 @@ export function getGeoDatas(url: string, callback: Function) {
       } as Feature);
     }
 
-    console.log('----geoData', geoData);
-
     callback(geoData);
   });
 

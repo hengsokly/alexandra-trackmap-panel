@@ -343,6 +343,17 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     }
   }
 
+  // Custom zoom options for geospatial map
+  let zoomOption = {};
+  if (options.viewType === 'geospatial') {
+    zoomOption = {
+      doubleClickZoom: options.geospatial.doubleClickZoom,
+      boxZoom: options.geospatial.boxZoom,
+      touchZoom: options.geospatial.touchZoom,
+      scrollWheelZoom: options.geospatial.scrollWheelZoom,
+    };
+  }
+
   return (
     <div
       className={cx(
@@ -358,6 +369,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         center={[mapCenter.latitude, mapCenter.longitude]}
         zoom={options.map.zoom}
         zoomSnap={0.5}
+        {...zoomOption}
         onmoveend={(event: LeafletEvent) => {
           onMapMoveEnd(event);
         }}

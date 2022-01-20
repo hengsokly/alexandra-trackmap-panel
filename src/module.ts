@@ -228,5 +228,29 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         defaultValue: '',
         showIf: (config) => config.viewType === 'geospatial',
       })
+      .addBooleanSwitch({
+        path: 'geospatial.doubleClickZoom',
+        name: 'Double click zoom',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'geospatial',
+      })
+      .addBooleanSwitch({
+        path: 'geospatial.boxZoom',
+        name: 'Box zoom',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'geospatial',
+      })
+      .addBooleanSwitch({
+        path: 'geospatial.touchZoom',
+        name: 'Touch zoom',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'geospatial',
+      })
+      .addBooleanSwitch({
+        path: 'geospatial.scrollWheelZoom',
+        name: 'Scroll wheel zoom',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'geospatial',
+      })
   );
 });

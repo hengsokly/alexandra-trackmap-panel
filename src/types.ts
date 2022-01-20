@@ -62,6 +62,10 @@ interface HexOptions {
 
 interface GeoSpatialOptions {
   geoJsonUrl: string;
+  doubleClickZoom: boolean;
+  boxZoom: boolean;
+  touchZoom: boolean;
+  scrollWheelZoom: boolean;
 }
 
 export interface Position {

@@ -37599,19 +37599,32 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       mapCenter.latitude = positions[positions.length - 1].latitude;
       mapCenter.longitude = positions[positions.length - 1].longitude;
     }
+  } // Custom zoom options for geospatial map
+
+
+  var zoomOption = {};
+
+  if (options.viewType === 'geospatial') {
+    zoomOption = {
+      doubleClickZoom: options.geospatial.doubleClickZoom,
+      boxZoom: options.geospatial.boxZoom,
+      touchZoom: options.geospatial.touchZoom,
+      scrollWheelZoom: options.geospatial.scrollWheelZoom
+    };
   }
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: Object(emotion__WEBPACK_IMPORTED_MODULE_3__["cx"])(styles.wrapper, Object(emotion__WEBPACK_IMPORTED_MODULE_3__["css"])(templateObject_1 || (templateObject_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__makeTemplateObject"])(["\n          width: ", "px;\n          height: ", "px;\n        "], ["\n          width: ", "px;\n          height: ", "px;\n        "])), width, height))
-  }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Map"], {
+  }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Map"], Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({
     ref: mapRef,
     center: [mapCenter.latitude, mapCenter.longitude],
     zoom: options.map.zoom,
-    zoomSnap: 0.5,
+    zoomSnap: 0.5
+  }, zoomOption, {
     onmoveend: function onmoveend(event) {
       onMapMoveEnd(event);
     }
-  }, (options.viewType === 'ant' || options.viewType === 'ant-marker') && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(AntPath, {
+  }), (options.viewType === 'ant' || options.viewType === 'ant-marker') && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(AntPath, {
     positions: antData,
     options: antOptions
   }), options.viewType === 'heat' && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(HeatmapLayer, {
@@ -37686,7 +37699,6 @@ function getGeoDatas(url, callback) {
       });
     }
 
-    console.log('----geoData', geoData);
     callback(geoData);
   });
   return geoData;
@@ -37995,6 +38007,34 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     path: 'geospatial.geoJsonUrl',
     name: 'GeoJSON URL',
     defaultValue: '',
+    showIf: function showIf(config) {
+      return config.viewType === 'geospatial';
+    }
+  }).addBooleanSwitch({
+    path: 'geospatial.doubleClickZoom',
+    name: 'Double click zoom',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'geospatial';
+    }
+  }).addBooleanSwitch({
+    path: 'geospatial.boxZoom',
+    name: 'Box zoom',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'geospatial';
+    }
+  }).addBooleanSwitch({
+    path: 'geospatial.touchZoom',
+    name: 'Touch zoom',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'geospatial';
+    }
+  }).addBooleanSwitch({
+    path: 'geospatial.scrollWheelZoom',
+    name: 'Scroll wheel zoom',
+    defaultValue: false,
     showIf: function showIf(config) {
       return config.viewType === 'geospatial';
     }
